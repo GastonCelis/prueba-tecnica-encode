@@ -1,0 +1,59 @@
+# Decisiones de diseño
+
+Registro de las decisiones tomadas.
+
+## D1 — Motor de persistencia: SQLite
+
+**Decisión:** SQLite mediante Entity Framework Core.
+
+**Motivo:** SQLite es un motor embebido basado en archivo: no requiere un servicio propio ni docker-compose, lo que simplifica el levantado del entorno por parte del evaluador.
+
+## D2 — Estructura de capas
+
+**Decisión:** tres proyectos — `Api`, `Domain`, `Infrastructure`.
+
+**Motivo:** Tres proyectos alcanzan para que la separación entre el rol Tenant y el rol Issuer sea visible en la estructura y no solo en la documentación. `Domain` no depende de nadie y define el contrato `ICredentialIssuer`; `Infrastructure` lo implementa. El controller depende de la interfaz, por lo que reemplazar la firma mock por una firma real (JWS) no impacta en la capa de aplicación.
+
+## D3 — Separación Tenant / Issuer
+
+**Decisión:** el Issuer es un servicio in-process, sin endpoint HTTP propio, expuesto tras la interfaz `ICredentialIssuer`.
+
+**Motivo:** es lo que indica el enunciado (sección 4.2.1).
+
+## D4 — Entidad Socio separada de Credential
+
+**Decisión:** se persisten dos entidades, `Socios` y `Credentials`.
+
+**Motivo:** el enunciado establece que `credentialSubject.id` (el DID del socio) "se genera una vez y se persiste", y que `numeroSocio` es secuencial y consistente entre reinicios. Ambos son atributos de la persona, no del documento emitido. Modelarlos en una entidad `Socio` permite que un mismo socio reciba futuras credenciales conservando su identidad.
+
+## D5 — Generación de numeroSocio
+
+**Decisión:** columna de identidad autoincremental en `Socios`, formateada a 6 dígitos con ceros a la izquierda (ej. `000123`).
+
+**Motivo:** delegar la secuencia al motor garantiza unicidad y consistencia entre reinicios sin lógica propia de concurrencia.
+
+**Consideración crítica:** `numeroSocio` forma parte del JSON que se firma, por lo que debe obtenerse antes de invocar al Issuer. Para cumplir la extensión 5a (si falla la firma no se persiste nada), toda la operación de alta se ejecuta dentro de una única transacción: alta del socio, firma y alta de la credencial. Un fallo en la firma provoca rollback y no deja registros huérfanos.
+
+## D6 — Persistencia de la credencial como documento JSON
+
+**Decisión:** la VC completa se guarda serializada en una columna de texto, con columnas adicionales (`ValidFrom`, `ValidUntil`, `Status`, `SocioId`) para consulta.
+
+**Motivo:** el enunciado exige persistir la credencial completa. Reconstruirla desde columnas sueltas arriesga alterar el orden de claves o el formato de fechas, rompiendo la correspondencia con la firma. Se conserva el JSON exacto que fue firmado y las columnas de proyección permiten listar y filtrar sin deserializar.
+
+## D7 — Codificación de proofValue
+
+**Decisión:** base64.
+
+**Motivo:** el enunciado indica explícitamente base64 en la regla del campo. Se observa que el ejemplo ilustrativo de `proof` muestra un valor de 64 caracteres hexadecimales, inconsistente con esa regla. Se implementa la regla escrita y se deja constancia de la observación.
+
+## D8 — Foto del socio
+
+**Decisión:** solo URL.
+
+**Motivo:** el enunciado define la URL como requisito mínimo y el upload de archivo como opcional. Se prioriza completar el flujo principal y la documentación.
+
+## D9 — Dockerización
+
+**Decisión:** No Dockerizar.
+
+**Motivo:** con SQLite no hay servicio externo que contenerizar, y el enunciado marca la dockerización de backend y frontend como opcional.
