@@ -57,3 +57,7 @@ Registro de las decisiones tomadas.
 **Decisión:** No Dockerizar.
 
 **Motivo:** con SQLite no hay servicio externo que contenerizar, y el enunciado marca la dockerización de backend y frontend como opcional.
+
+## D11 — Configuración por archivo .env
+
+**Decisión:** la configuración se maneja por variables de entorno, cargadas desde un archivo `.env` mediante el paquete `DotNetEnv`.

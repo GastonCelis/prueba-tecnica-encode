@@ -25,7 +25,7 @@ public sealed class HmacCredentialIssuer : ICredentialIssuer
 
         if (string.IsNullOrWhiteSpace(_opciones.SigningKey))
             throw new InvalidOperationException(
-                "No hay clave de firma configurada. Definir Issuer:SigningKey.");
+                "No hay clave de firma configurada.");
 
         var rawId = Guid.NewGuid();
         var id = $"{_opciones.BaseUrl.TrimEnd('/')}/{rawId}";
@@ -57,4 +57,6 @@ public sealed class HmacCredentialIssuer : ICredentialIssuer
         var hash = HMACSHA256.HashData(bytesClave, bytesMensaje);
         return Convert.ToBase64String(hash);
     }
+
+    public string Serializar(VerifiableCredential vc) => VcSerializer.Serializar(vc);
 }
