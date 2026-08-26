@@ -22,7 +22,7 @@ dotnet --list-sdks
 node -v
 ```
 
-## Cómo levantar el proyecto
+## Información del proyecto
 
 El sistema se compone de dos aplicaciones que se levantan por separado: la
 API en .NET y el frontend en Angular. Ambas deben estar corriendo
@@ -165,10 +165,12 @@ Alternativamente, levantar la API con el perfil `http` y ajustar `apiUrl` a
 
 ### Pantallas
 
-| Ruta                 | Descripción                                                     |
-| -------------------- | --------------------------------------------------------------- |
-| `/credenciales`      | Listado con filtros, estado vacío y detalle expandible de la VC |
-| `/credenciales/alta` | Formulario de alta y pantalla de resultado                      |
+| Ruta            | Descripción                                                     |
+| --------------- | --------------------------------------------------------------- |
+| `/credenciales` | Listado con filtros, estado vacío y detalle expandible de la VC |
+
+El alta de credencial se realiza en un modal sobre el listado, que incluye
+el formulario y la confirmación con el número de socio asignado.
 
 ## Documentación
 

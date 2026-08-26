@@ -1,13 +1,20 @@
 .barra {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.subtitulo {
+    margin: 0.25rem 0 0;
+    color: var(--texto-suave);
+    font-size: 0.875rem;
 }
 
 .filtros {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.6rem;
     margin-bottom: 1.5rem;
 }
 
@@ -15,51 +22,191 @@
     flex: 1;
 }
 
-.tabla {
-    width: 100%;
-    border-collapse: collapse;
+.filtros select {
+    min-width: 190px;
 }
 
-.tabla th,
-.tabla td {
-    padding: 0.6rem;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
+.conteo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 1.25rem;
+    color: var(--texto-suave);
+    font-size: 0.875rem;
+    margin: 0 0 1rem;
+}
+
+.grilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 1rem;
+}
+
+.carnet {
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    padding: 1.25rem;
+}
+
+.carnet-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--borde);
 }
 
 .foto {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
+    object-fit: cover;
+    background: var(--fondo);
+    flex-shrink: 0;
 }
 
-.estado {
-    padding: 0.15rem 0.5rem;
+.identidad {
+    flex: 1;
+    min-width: 0;
+}
+
+.identidad h2 {
+    font-size: 1rem;
+}
+
+.dni {
+    margin: 0.15rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+}
+
+.numero {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--acento);
+    background: var(--acento-suave);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+}
+
+.carnet-datos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 1rem 0;
+    font-size: 0.875rem;
+}
+
+.carnet-datos>div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.etiqueta {
+    color: var(--texto-suave);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.pastilla {
+    padding: 0.15rem 0.6rem;
     border-radius: 999px;
-    background: #e8f5e9;
-    font-size: 0.85rem;
+    background: var(--fondo);
+    border: 1px solid var(--borde);
+    font-size: 0.8125rem;
+    text-transform: capitalize;
+}
+
+.pastilla.activa {
+    background: var(--exito-suave);
+    border-color: #a7f3d0;
+    color: var(--exito);
+}
+
+.detalle {
+    width: 100%;
+    font-size: 0.8125rem;
+    color: var(--texto-suave);
+}
+
+.vc {
+    margin: 0.75rem 0 0;
+    padding: 0.9rem;
+    background: #f9fafb;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    max-height: 320px;
+    overflow: auto;
 }
 
 .vacio {
     text-align: center;
-    padding: 3rem 1rem;
-    border: 1px dashed #ccc;
-    border-radius: 8px;
+    padding: 4rem 1.5rem;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+}
+
+.vacio p {
+    color: var(--texto-suave);
+    margin: 0.5rem 0 1.5rem;
 }
 
 .mensaje {
-    padding: 2rem;
+    padding: 3rem;
     text-align: center;
+    color: var(--texto-suave);
 }
 
 .error {
-    color: #c62828;
+    color: var(--error);
 }
 
-.vc {
-    background: #f5f5f5;
-    padding: 1rem;
-    overflow-x: auto;
-    font-size: 0.8rem;
+.atenuada {
+    opacity: 0.5;
+    transition: opacity 0.15s;
+    pointer-events: none;
+}
+
+.spinner {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--borde);
+    border-top-color: var(--acento);
+    border-radius: 50%;
+    animation: girar 0.7s linear infinite;
+}
+
+.spinner-chico {
+    width: 14px;
+    height: 14px;
+    border-width: 2px;
+}
+
+@keyframes girar {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.cargando-inicial {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 4rem 1.5rem;
+    color: var(--texto-suave);
+}
+
+.cargando-inicial p {
+    margin: 0;
 }

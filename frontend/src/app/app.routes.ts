@@ -7,10 +7,5 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./pages/listado/listado').then(m => m.Listado)
     },
-    {
-        path: 'credenciales/alta',
-        loadComponent: () =>
-            import('./pages/alta/alta').then(m => m.Alta)
-    },
     { path: '**', redirectTo: 'credenciales' }
 ];

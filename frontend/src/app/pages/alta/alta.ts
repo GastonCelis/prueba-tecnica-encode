@@ -1,20 +1,21 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
 import { CredencialesService } from '../../services/credenciales';
 import { AltaCredencialRequest, AltaCredencialResponse } from '../../models/credencial';
+import { delay } from 'rxjs';
 
 @Component({
   selector: 'app-alta',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './alta.html',
   styleUrl: './alta.css'
 })
 export class Alta {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(CredencialesService);
-  private readonly router = inject(Router);
+  private static readonly DEMORA_MINIMA = 600;
 
+  readonly cerrar = output<boolean>();
   readonly enviando = signal(false);
   readonly error = signal<string | null>(null);
   readonly resultado = signal<AltaCredencialResponse | null>(null);
@@ -36,20 +37,24 @@ export class Alta {
     this.enviando.set(true);
     this.error.set(null);
 
-    this.service.alta(this.form.getRawValue() as AltaCredencialRequest).subscribe({
-      next: respuesta => {
-        this.resultado.set(respuesta);
-        this.enviando.set(false);
-      },
-      error: err => {
-        this.error.set(err.error?.detail ?? 'No se pudo emitir la credencial.');
-        this.enviando.set(false);
-      }
-    });
+    this.service
+      .alta(this.form.getRawValue() as AltaCredencialRequest)
+      .pipe(delay(Alta.DEMORA_MINIMA))
+      .subscribe({
+        next: respuesta => {
+          this.resultado.set(respuesta);
+          this.enviando.set(false);
+        },
+        error: err => {
+          this.error.set(err.error?.detail ?? 'No se pudo emitir la credencial.');
+          this.enviando.set(false);
+        }
+      });
   }
 
-  volverAlListado(): void {
-    this.router.navigate(['/credenciales']);
+  solicitarCierre(): void {
+    if (this.enviando()) return;
+    this.cerrar.emit(this.resultado() !== null);
   }
 
   formatearFecha(iso: string): string {

@@ -1,23 +1,41 @@
-@if (resultado(); as r) {
-  <section class="resultado">
-    <h1>Credencial emitida</h1>
-    <dl>
-      <dt>Número de socio</dt>
-      <dd class="numero">{{ r.numeroSocio }}</dd>
-      <dt>Vigencia</dt>
-      <dd>{{ formatearFecha(r.validFrom) }} — {{ formatearFecha(r.validUntil) }}</dd>
-      <dt>Identificador</dt>
-      <dd class="id">{{ r.id }}</dd>
-    </dl>
-    <button type="button" (click)="volverAlListado()">Volver al listado</button>
-  </section>
-} @else {
-  <header class="barra">
-    <h1>Nueva credencial</h1>
-    <a routerLink="/credenciales">Volver</a>
-  </header>
+<div class="fondo" (click)="solicitarCierre()"></div>
 
-  <form [formGroup]="form" (ngSubmit)="enviar()" class="formulario">
+<div class="panel" role="dialog" aria-modal="true">
+  @if (enviando()) {
+  <div class="cargando-overlay">
+    <span class="spinner-grande"></span>
+    <p>Cargando…</p>
+  </div>
+}
+
+  @if (resultado(); as r) {
+    <div class="panel-cuerpo">
+      <p class="exito">Credencial emitida correctamente</p>
+      <h2>Nuevo socio registrado</h2>
+
+      <dl>
+        <dt>Número de socio</dt>
+        <dd class="numero">{{ r.numeroSocio }}</dd>
+        <dt>Vigencia</dt>
+        <dd>{{ formatearFecha(r.validFrom) }} — {{ formatearFecha(r.validUntil) }}</dd>
+        <dt>Identificador</dt>
+        <dd class="id">{{ r.id }}</dd>
+      </dl>
+
+      <button type="button" class="boton-primario ancho"
+              (click)="solicitarCierre()">
+        Volver al listado
+      </button>
+    </div>
+  } @else {
+    <header class="panel-cabecera">
+      <h2>Nueva credencial</h2>
+      <button type="button" class="cerrar" aria-label="Cerrar"
+              (click)="solicitarCierre()">×</button>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="enviar()" class="panel-cuerpo">
+  <fieldset [disabled]="enviando()" class="campos">
     <label>
       Nombre
       <input type="text" formControlName="nombre" />
@@ -62,13 +80,18 @@
         <small class="error">Ingresá una URL válida.</small>
       }
     </label>
+  </fieldset>
 
-    @if (error()) {
-      <p class="error caja">{{ error() }}</p>
-    }
+  @if (error()) {
+    <p class="error caja">{{ error() }}</p>
+  }
 
-    <button type="submit" [disabled]="enviando()">
-      {{ enviando() ? 'Emitiendo…' : 'Emitir credencial' }}
+  <div class="acciones">
+    <button type="button" (click)="solicitarCierre()" [disabled]="enviando()">
+      Cancelar
     </button>
-  </form>
-}
+    <button type="submit" [disabled]="enviando()">Emitir credencial</button>
+  </div>
+</form>
+  }
+</div>

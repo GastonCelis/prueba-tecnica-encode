@@ -1,6 +1,11 @@
 <header class="barra">
-  <h1>Credenciales emitidas</h1>
-  <a routerLink="/credenciales/alta" class="boton">Nueva credencial</a>
+  <div>
+    <h1>Credenciales emitidas</h1>
+    <p class="subtitulo">Club de Fútbol de Córdoba</p>
+  </div>
+  <button type="button" class="boton-primario" (click)="abrirModal()">
+    Nueva credencial
+  </button>
 </header>
 
 <section class="filtros">
@@ -8,68 +13,83 @@
     type="text"
     placeholder="Buscar por nombre, apellido o DNI"
     [(ngModel)]="busqueda"
-    (keyup.enter)="cargar()" />
+    (ngModelChange)="cargar()" />
 
-  <select [(ngModel)]="categoria" (change)="cargar()">
+  <select [(ngModel)]="categoria" (ngModelChange)="cargar()">
     <option value="">Todas las categorías</option>
     <option value="adulto">Adulto</option>
     <option value="juvenil">Juvenil</option>
     <option value="niño">Niño</option>
   </select>
-
-  <button type="button" (click)="cargar()">Buscar</button>
 </section>
 
-@if (cargando()) {
-  <p class="mensaje">Cargando…</p>
+@if (cargaInicial()) {
+  <div class="cargando-inicial">
+    <span class="spinner"></span>
+    <p>Cargando credenciales…</p>
+  </div>
 } @else if (error()) {
   <p class="mensaje error">{{ error() }}</p>
-} @else if (credenciales().length === 0) {
+} @else if (credenciales().length === 0 && !cargando()) {
   <div class="vacio">
-    <p>No hay credenciales emitidas.</p>
-    <a routerLink="/credenciales/alta" class="boton">Emitir la primera</a>
+    <h2>No se encontraron credenciales</h2>
+    <p>Probá ajustando los filtros de búsqueda.</p>
   </div>
 } @else {
-  <table class="tabla">
-    <thead>
-      <tr>
-        <th>Foto</th>
-        <th>Nº socio</th>
-        <th>Apellido y nombre</th>
-        <th>Categoría</th>
-        <th>Vigencia</th>
-        <th>Estado</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (c of credenciales(); track c.id) {
-        <tr>
-          <td><img [src]="c.foto" [alt]="c.apellido" class="foto" /></td>
-          <td>{{ c.numeroSocio }}</td>
-          <td>{{ c.apellido }}, {{ c.nombre }}</td>
-          <td>{{ c.categoria }}</td>
-          <td>
-            {{ formatearFecha(c.validFrom) }} — {{ formatearFecha(c.validUntil) }}
-          </td>
-          <td>
-            <span class="estado">
+  <div class="conteo">
+    @if (cargando()) {
+      <span class="spinner spinner-chico"></span>
+      <span>Buscando…</span>
+    } @else {
+      <span>
+        {{ credenciales().length }}
+        {{ credenciales().length === 1 ? 'credencial' : 'credenciales' }}
+      </span>
+    }
+  </div>
+
+    <div class="grilla" [class.atenuada]="cargando()">
+    @for (c of credenciales(); track c.id) {
+      <article class="carnet">
+        <div class="carnet-cabecera">
+          <img [src]="c.foto" [alt]="c.apellido" class="foto"
+               onerror="this.style.visibility='hidden'" />
+          <div class="identidad">
+            <h2>{{ c.nombre }} {{ c.apellido }}</h2>
+            <p class="dni">DNI {{ c.dni }}</p>
+          </div>
+          <span class="numero">{{ c.numeroSocio }}</span>
+        </div>
+
+        <div class="carnet-datos">
+          <div>
+            <span class="etiqueta">Categoría</span>
+            <span class="pastilla">{{ c.categoria }}</span>
+          </div>
+          <div>
+            <span class="etiqueta">Vigencia</span>
+            <span>{{ formatearFecha(c.validFrom) }} — {{ formatearFecha(c.validUntil) }}</span>
+          </div>
+          <div>
+            <span class="etiqueta">Estado</span>
+            <span class="pastilla" [class.activa]="c.credentialStatus === 0">
               {{ c.credentialStatus === 0 ? 'Activa' : 'Inactiva' }}
             </span>
-          </td>
-          <td>
-            <button type="button" (click)="alternarDetalle(c.id)">
-              {{ expandida() === c.id ? 'Ocultar' : 'Ver VC' }}
-            </button>
-          </td>
-        </tr>
+          </div>
+        </div>
+
+        <button type="button" class="detalle" (click)="alternarDetalle(c.id)">
+          {{ expandida() === c.id ? 'Ocultar credencial verificable' : 'Ver credencial verificable' }}
+        </button>
 
         @if (expandida() === c.id) {
-          <tr>
-            <td colspan="7"><pre class="vc">{{ formatoVc(c.vc) }}</pre></td>
-          </tr>
+          <pre class="vc">{{ formatoVc(c.vc) }}</pre>
         }
-      }
-    </tbody>
-  </table>
+      </article>
+    }
+  </div>
+}
+
+@if (modalAbierto()) {
+  <app-alta (cerrar)="cerrarModal($event)" />
 }

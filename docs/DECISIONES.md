@@ -91,3 +91,11 @@ Registro de las decisiones tomadas.
 **Decisión:** estilos propios, sin librería de componentes.
 
 **Motivo:** el enunciado admite explícitamente un estilo simple y minimalista.
+
+## D17 — Alta en modal sobre el listado
+
+**Decisión:** el alta de credencial se resuelve en un modal sobre la pantalla de listado, en lugar de una ruta y una pantalla propias.
+
+**Motivo:** el enunciado requiere que la interfaz implemente las funcionalidades de alta y listado, y sugiere mostrar una pantalla de resultado con el número de socio asignado antes de volver al listado.
+
+Mantener el listado visible de fondo evita perder el contexto y permite refrescarlo automáticamente al cerrar, sin una navegación intermedia.

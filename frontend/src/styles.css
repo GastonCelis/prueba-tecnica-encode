@@ -1,42 +1,102 @@
+:root {
+    --fondo: #f6f7f9;
+    --superficie: #ffffff;
+    --borde: #e5e7eb;
+    --texto: #111827;
+    --texto-suave: #6b7280;
+    --acento: #1e40af;
+    --acento-suave: #eff6ff;
+    --exito: #047857;
+    --exito-suave: #ecfdf5;
+    --error: #b91c1c;
+    --error-suave: #fef2f2;
+    --radio: 12px;
+    --sombra: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
-    font-family: system-ui, sans-serif;
-    color: #222;
-    background: #fafafa;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--texto);
+    background: var(--fondo);
+    line-height: 1.5;
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
 }
 
 .contenedor {
-    max-width: 960px;
+    max-width: 1040px;
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 2.5rem 1.5rem 4rem;
 }
 
-.boton {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    background: #1565c0;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    text-decoration: none;
-    cursor: pointer;
-}
-
+.boton,
 button {
-    padding: 0.5rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: white;
+    font: inherit;
+    padding: 0.55rem 1.1rem;
+    border-radius: 8px;
+    border: 1px solid var(--borde);
+    background: var(--superficie);
+    color: var(--texto);
     cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
 }
 
+button:hover:not(:disabled),
+.boton:hover {
+    border-color: #cbd5e1;
+    background: #f9fafb;
+}
+
+.boton-primario,
 button[type="submit"] {
-    background: #1565c0;
-    color: white;
-    border: none;
+    background: var(--acento);
+    border-color: var(--acento);
+    color: #fff;
+    font-weight: 500;
+}
+
+.boton-primario:hover:not(:disabled),
+button[type="submit"]:hover:not(:disabled) {
+    background: #1e3a8a;
+    border-color: #1e3a8a;
+    color: #fff;
 }
 
 button:disabled {
-    opacity: 0.6;
+    opacity: 0.55;
     cursor: default;
+}
+
+input,
+select {
+    font: inherit;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: var(--superficie);
+    color: var(--texto);
+}
+
+input:focus,
+select:focus {
+    outline: 2px solid var(--acento);
+    outline-offset: -1px;
+    border-color: var(--acento);
 }
