@@ -24,7 +24,20 @@ node -v
 
 ## Cómo levantar el proyecto
 
+El sistema se compone de dos aplicaciones que se levantan por separado: la
+API en .NET y el frontend en Angular. Ambas deben estar corriendo
+simultáneamente.
+
 Con la API corriendo, abrir `/swagger` (por ejemplo `https://localhost:7240/swagger`) para explorar y ejecutar los endpoints.
+
+### 2. Crear la base de datos
+
+```bash
+dotnet tool install --global dotnet-ef
+dotnet ef database update --project src/Wallet.Infrastructure --startup-project src/Wallet.Api
+```
+
+Esto genera el archivo `wallet.db` dentro de `src/Wallet.Api/`.
 
 ## Variables de entorno
 
@@ -121,6 +134,41 @@ Cada elemento incluye los datos del socio, la vigencia y el estado, más un
 campo `vc` con la credencial verificable completa —incluidos los campos
 técnicos del protocolo (`id`, `type`, `issuer`, `proof`)— para su
 presentación en un detalle expandible.
+
+## Frontend
+
+Aplicación Angular con dos pantallas: listado de credenciales emitidas y
+alta de credencial.
+
+### Levantar el frontend
+
+```bash
+cd frontend
+npm install
+ng serve
+```
+
+Queda disponible en `http://localhost:4200`.
+
+Requiere que la API esté corriendo. La URL del backend se configura en
+`frontend/src/environments/environment.development.ts`.
+
+### Certificado de desarrollo
+
+La API se levanta con un certificado autofirmado. El navegador bloquea las
+peticiones del frontend hasta que se acepte manualmente: abrir
+`https://localhost:7240/swagger` en una pestaña y aceptar la advertencia de
+seguridad.
+
+Alternativamente, levantar la API con el perfil `http` y ajustar `apiUrl` a
+`http://localhost:5000/api`.
+
+### Pantallas
+
+| Ruta                 | Descripción                                                     |
+| -------------------- | --------------------------------------------------------------- |
+| `/credenciales`      | Listado con filtros, estado vacío y detalle expandible de la VC |
+| `/credenciales/alta` | Formulario de alta y pantalla de resultado                      |
 
 ## Documentación
 

@@ -73,3 +73,21 @@ Registro de las decisiones tomadas.
 **Decisión:** se implementan tres filtros opcionales sobre el listado: búsqueda parcial por nombre, apellido o DNI; categoría; y estado de la credencial.
 
 **Motivo:** se incluyen por su bajo costo y porque cubren los casos de uso reales de una pantalla de listado.
+
+## D14 — Tecnología del frontend
+
+**Decisión:** Angular con componentes standalone, signals y Reactive Forms.
+
+**Motivo:** se utiliza Angular por ser el stack utilizado en el equipo.
+
+## D15 — Estructura del repositorio
+
+**Decisión:** un único repositorio con el backend y el frontend.
+
+**Motivo:** mantener ambas aplicaciones juntas permite un único `README.md` con las instrucciones de levantado y un historial de commits unificado, sin necesidad de correlacionar dos repositorios separados.
+
+## D16 — Diseño visual
+
+**Decisión:** estilos propios, sin librería de componentes.
+
+**Motivo:** el enunciado admite explícitamente un estilo simple y minimalista.

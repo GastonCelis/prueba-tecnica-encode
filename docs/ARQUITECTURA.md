@@ -242,3 +242,45 @@ Fuera de alcance:
 - Autenticación y autorización
 - Fidelidad estricta a la especificación W3C VC/DID
 - Paginación del listado
+
+## Frontend
+
+Aplicación Angular independiente que consume la API por HTTP. No comparte
+código con el backend: la comunicación es exclusivamente a través de los
+dos endpoints REST.
+
+### Organización
+
+| Carpeta          | Contenido                                             |
+| ---------------- | ----------------------------------------------------- |
+| `models/`        | Interfaces TypeScript que espejan los DTOs de la API  |
+| `services/`      | `CredencialesService`, único punto de acceso a la API |
+| `pages/listado/` | Pantalla de listado (UC02)                            |
+| `pages/alta/`    | Pantalla de alta y resultado (UC01)                   |
+
+Ambas pantallas se cargan de forma diferida mediante `loadComponent`: el
+código de cada una se descarga al navegar a su ruta.
+
+### Estado y comunicación
+
+El estado local de cada pantalla se maneja con _signals_. Toda llamada a la
+API pasa por `CredencialesService`, que centraliza la URL base y la
+construcción de los parámetros de consulta.
+
+Los errores del backend llegan en formato `ProblemDetails` y se muestran al
+usuario leyendo el campo `detail`, de modo que un DNI duplicado o un fallo
+en la firma se informan con el mensaje real del servidor.
+
+### Validación
+
+El formulario de alta usa _Reactive Forms_ con las mismas reglas que valida
+el backend: campos obligatorios, DNI de 7 a 9 dígitos, categoría dentro del
+conjunto permitido y foto con formato de URL.
+
+La validación del cliente evita peticiones innecesarias, pero no reemplaza
+la del servidor: ambas se mantienen.
+
+### CORS
+
+El frontend corre en `localhost:4200` y la API en `localhost:7240`. La API
+declara una política de CORS que autoriza ese origen.
