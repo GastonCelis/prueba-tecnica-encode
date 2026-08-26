@@ -1,0 +1,75 @@
+<header class="barra">
+  <h1>Credenciales emitidas</h1>
+  <a routerLink="/credenciales/alta" class="boton">Nueva credencial</a>
+</header>
+
+<section class="filtros">
+  <input
+    type="text"
+    placeholder="Buscar por nombre, apellido o DNI"
+    [(ngModel)]="busqueda"
+    (keyup.enter)="cargar()" />
+
+  <select [(ngModel)]="categoria" (change)="cargar()">
+    <option value="">Todas las categorías</option>
+    <option value="adulto">Adulto</option>
+    <option value="juvenil">Juvenil</option>
+    <option value="niño">Niño</option>
+  </select>
+
+  <button type="button" (click)="cargar()">Buscar</button>
+</section>
+
+@if (cargando()) {
+  <p class="mensaje">Cargando…</p>
+} @else if (error()) {
+  <p class="mensaje error">{{ error() }}</p>
+} @else if (credenciales().length === 0) {
+  <div class="vacio">
+    <p>No hay credenciales emitidas.</p>
+    <a routerLink="/credenciales/alta" class="boton">Emitir la primera</a>
+  </div>
+} @else {
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Foto</th>
+        <th>Nº socio</th>
+        <th>Apellido y nombre</th>
+        <th>Categoría</th>
+        <th>Vigencia</th>
+        <th>Estado</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (c of credenciales(); track c.id) {
+        <tr>
+          <td><img [src]="c.foto" [alt]="c.apellido" class="foto" /></td>
+          <td>{{ c.numeroSocio }}</td>
+          <td>{{ c.apellido }}, {{ c.nombre }}</td>
+          <td>{{ c.categoria }}</td>
+          <td>
+            {{ formatearFecha(c.validFrom) }} — {{ formatearFecha(c.validUntil) }}
+          </td>
+          <td>
+            <span class="estado">
+              {{ c.credentialStatus === 0 ? 'Activa' : 'Inactiva' }}
+            </span>
+          </td>
+          <td>
+            <button type="button" (click)="alternarDetalle(c.id)">
+              {{ expandida() === c.id ? 'Ocultar' : 'Ver VC' }}
+            </button>
+          </td>
+        </tr>
+
+        @if (expandida() === c.id) {
+          <tr>
+            <td colspan="7"><pre class="vc">{{ formatoVc(c.vc) }}</pre></td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+}

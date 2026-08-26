@@ -1,0 +1,74 @@
+@if (resultado(); as r) {
+  <section class="resultado">
+    <h1>Credencial emitida</h1>
+    <dl>
+      <dt>Número de socio</dt>
+      <dd class="numero">{{ r.numeroSocio }}</dd>
+      <dt>Vigencia</dt>
+      <dd>{{ formatearFecha(r.validFrom) }} — {{ formatearFecha(r.validUntil) }}</dd>
+      <dt>Identificador</dt>
+      <dd class="id">{{ r.id }}</dd>
+    </dl>
+    <button type="button" (click)="volverAlListado()">Volver al listado</button>
+  </section>
+} @else {
+  <header class="barra">
+    <h1>Nueva credencial</h1>
+    <a routerLink="/credenciales">Volver</a>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="enviar()" class="formulario">
+    <label>
+      Nombre
+      <input type="text" formControlName="nombre" />
+      @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+        <small class="error">El nombre es obligatorio.</small>
+      }
+    </label>
+
+    <label>
+      Apellido
+      <input type="text" formControlName="apellido" />
+      @if (form.controls.apellido.touched && form.controls.apellido.invalid) {
+        <small class="error">El apellido es obligatorio.</small>
+      }
+    </label>
+
+    <label>
+      DNI
+      <input type="text" inputmode="numeric" formControlName="dni" />
+      @if (form.controls.dni.touched && form.controls.dni.invalid) {
+        <small class="error">Debe contener entre 7 y 9 dígitos.</small>
+      }
+    </label>
+
+    <label>
+      Categoría
+      <select formControlName="categoria">
+        <option value="">Seleccionar…</option>
+        <option value="adulto">Adulto</option>
+        <option value="juvenil">Juvenil</option>
+        <option value="niño">Niño</option>
+      </select>
+      @if (form.controls.categoria.touched && form.controls.categoria.invalid) {
+        <small class="error">Seleccioná una categoría.</small>
+      }
+    </label>
+
+    <label>
+      Foto (URL)
+      <input type="url" formControlName="foto" placeholder="https://…" />
+      @if (form.controls.foto.touched && form.controls.foto.invalid) {
+        <small class="error">Ingresá una URL válida.</small>
+      }
+    </label>
+
+    @if (error()) {
+      <p class="error caja">{{ error() }}</p>
+    }
+
+    <button type="submit" [disabled]="enviando()">
+      {{ enviando() ? 'Emitiendo…' : 'Emitir credencial' }}
+    </button>
+  </form>
+}
