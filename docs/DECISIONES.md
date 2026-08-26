@@ -61,3 +61,15 @@ Registro de las decisiones tomadas.
 ## D11 — Configuración por archivo .env
 
 **Decisión:** la configuración se maneja por variables de entorno, cargadas desde un archivo `.env` mediante el paquete `DotNetEnv`.
+
+## D12 — Ordenamiento del listado en memoria
+
+**Decisión:** el listado de credenciales se ordena en memoria y no en la consulta SQL.
+
+**Motivo:** SQLite no tiene un tipo de dato nativo para fechas y almacena `DateTimeOffset` como texto, por lo que el proveedor de EF Core no admite `ORDER BY` sobre esas columnas. El ordenamiento se resuelve con LINQ to Objects tras materializar la consulta.
+
+## D13 — Filtros del listado
+
+**Decisión:** se implementan tres filtros opcionales sobre el listado: búsqueda parcial por nombre, apellido o DNI; categoría; y estado de la credencial.
+
+**Motivo:** se incluyen por su bajo costo y porque cubren los casos de uso reales de una pantalla de listado.

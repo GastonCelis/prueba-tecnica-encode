@@ -17,6 +17,7 @@ builder.Services.AddScoped<ICredentialIssuer, HmacCredentialIssuer>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<EmitirCredencialService>();
+builder.Services.AddScoped<ListarCredencialesService>();
 
 var app = builder.Build();
 

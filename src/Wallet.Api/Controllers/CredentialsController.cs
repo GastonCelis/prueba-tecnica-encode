@@ -12,8 +12,14 @@ namespace Wallet.Api.Controllers;
 public sealed class CredentialsController : ControllerBase
 {
     private readonly EmitirCredencialService _emitir;
+    private readonly ListarCredencialesService _listar;
 
-    public CredentialsController(EmitirCredencialService emitir) => _emitir = emitir;
+    public CredentialsController(
+        EmitirCredencialService emitir, ListarCredencialesService listar)
+    {
+        _emitir = emitir;
+        _listar = listar;
+    }
 
     [HttpPost]
     public async Task<IActionResult> Alta(
@@ -57,5 +63,24 @@ public sealed class CredentialsController : ControllerBase
                 detail: "Ya existe un socio registrado con ese DNI.",
                 statusCode: StatusCodes.Status409Conflict);
         }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Listar(
+        [FromQuery] FiltroCredencialesDto filtro, CancellationToken ct)
+    {
+        Categoria? categoria = filtro.Categoria switch
+        {
+            "adulto" => Categoria.Adulto,
+            "juvenil" => Categoria.Juvenil,
+            "niño" => Categoria.Nino,
+            _ => null
+        };
+
+        var credenciales = await _listar.EjecutarAsync(
+            filtro.Busqueda, categoria, filtro.Estado, ct);
+
+        var resultado = credenciales.Select(CredencialListadoDto.Desde).ToList();
+        return Ok(resultado);
     }
 }
