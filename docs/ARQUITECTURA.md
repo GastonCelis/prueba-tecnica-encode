@@ -92,28 +92,19 @@ unidad de trabajo.
 
 ## Flujo de UC01 — Alta de credencial
 
-Cliente
-│ POST /api/credentials
-▼
-CredentialsController
-│ valida el DTO, traduce la categoría
-▼
-EmitirCredencialService ─── abre transacción
-│
-├─► ICredentialRepository.AgregarSocioAsync
-│ inserta el socio; SQLite asigna el Id autoincremental
-│ del que deriva numeroSocio
-│
-├─► arma el CredentialSubject
-│
-├─► ICredentialIssuer.Emitir
-│ genera id, type, issuer, validFrom, validUntil
-│ canonicaliza y calcula el HMAC-SHA256
-│
-├─► ICredentialRepository.AgregarCredencialAsync
-│ persiste la VC completa serializada
-│
-└─── commit
+1. El cliente envía `POST /api/credentials` con los datos del socio.
+2. `CredentialsController` valida el DTO y traduce la categoría al enum
+   del dominio.
+3. `EmitirCredencialService` abre una transacción.
+4. Se inserta el socio mediante `ICredentialRepository.AgregarSocioAsync`.
+   SQLite asigna el `Id` autoincremental, del que deriva `numeroSocio`.
+5. Se arma el `CredentialSubject` con los datos del socio.
+6. `ICredentialIssuer.Emitir` genera `id`, `type`, `issuer`, `validFrom`
+   y `validUntil`, canonicaliza la credencial y calcula el HMAC-SHA256.
+7. Se persiste la credencial completa serializada mediante
+   `ICredentialRepository.AgregarCredencialAsync`.
+8. Se confirma la transacción y se responde `201 Created` con el número
+   de socio y la vigencia.
 
 ### Atomicidad
 
@@ -137,24 +128,17 @@ quedan registros huérfanos ni se consume un número de socio.
 
 ## Flujo de UC02 — Listado de credenciales
 
-Cliente
-│ GET /api/credentials?busqueda=&categoria=&estado=
-▼
-CredentialsController
-│ valida y traduce los filtros
-▼
-ListarCredencialesService
-│
-├─► ICredentialRepository.ListarAsync
-│ filtra por búsqueda y estado en la base
-│ ordena por vigencia en memoria
-│
-└─► filtra por categoría en memoria
-▼
-CredencialListadoDto.Desde
-│ proyecta cada credencial a la vista del listado
-▼
-200 OK
+1. El cliente envía `GET /api/credentials` con los filtros opcionales
+   `busqueda`, `categoria` y `estado`.
+2. `CredentialsController` valida los parámetros y traduce la categoría al
+   enum del dominio.
+3. `ListarCredencialesService` invoca a
+   `ICredentialRepository.ListarAsync`, que aplica los filtros de búsqueda
+   y estado en la consulta a la base y ordena por vigencia en memoria.
+4. El caso de uso aplica el filtro por categoría en memoria.
+5. `CredencialListadoDto.Desde` proyecta cada credencial a la vista del
+   listado.
+6. Se responde `200 OK` con el array resultante.
 
 Los datos que se muestran se extraen del JSON persistido, no de la tabla
 `socios`. La credencial es un documento histórico: refleja lo que se firmó
